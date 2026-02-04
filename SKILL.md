@@ -1,269 +1,243 @@
 ---
 name: solana-agent-kit
 version: 2.0.0
-description: Complete toolkit for AI agents to interact with Solana blockchain. Built with @solana/kit following Solana Foundation guidelines (solana.com/SKILL.md). Send tokens, swap via Jupiter, check balances.
+description: The most comprehensive blockchain toolkit for AI agents on Solana. Wallet management, Jupiter swaps, Marinade staking, Kamino lending, Raydium liquidity, Metaplex NFTs.
 homepage: https://github.com/Pratiikpy/solana-agent-kit
-metadata: {"openclaw":{"emoji":"🛠️","category":"blockchain","chains":["solana"],"sdk":"@solana/kit","hackathon":"solana-colosseum-2026"}}
 ---
 
-# Solana Agent Kit 🛠️
+# Solana Agent Kit
 
-**The complete toolkit for AI agents to interact with Solana.**
+The complete blockchain toolkit for AI agents on Solana. Everything an agent needs to operate autonomously on-chain.
 
-Give your agent a wallet and let it transact on-chain.
-
-## 🎯 What It Does
-
-Enables AI agents to:
-1. **Check balances** - SOL and any SPL token
-2. **Send tokens** - Transfer SOL/USDC/any token
-3. **Swap tokens** - Jupiter integration for best rates
-4. **Monitor wallets** - Watch for incoming transactions
-5. **Build transactions** - Construct complex tx programmatically
-
-## Why This Matters
-
-Most AI agents just call APIs. This agent:
-- **Actually transacts** on Solana mainnet
-- **Holds real tokens** in its own wallet
-- **Makes real swaps** via Jupiter
-- **Autonomous finance** - no human in the loop
-
-## Quick Start
+## Installation
 
 ```bash
-# Install
 npm install -g solana-agent-kit
-
-# Set up wallet (creates new or uses existing)
-solana-agent-kit init
-
-# Check balance
-solana-agent-kit balance
-
-# Send SOL
-solana-agent-kit send --to <ADDRESS> --amount 0.1 --token SOL
-
-# Swap tokens
-solana-agent-kit swap --from SOL --to USDC --amount 1
 ```
 
-## Commands
+## Core Commands
 
 ### Wallet Management
 
 ```bash
-# Initialize/create wallet
+# Create new wallet (generates and saves keypair)
 solana-agent-kit init
-# Output: Wallet created at ~/.config/solana-agent-kit/wallet.json
 
 # Show wallet address
 solana-agent-kit address
 
-# Check all balances
+# Check all balances (SOL + tokens)
 solana-agent-kit balance
 
 # Check specific token
 solana-agent-kit balance --token USDC
+solana-agent-kit balance --token mSOL
 ```
 
-### Token Transfers
+### Token Prices
 
 ```bash
-# Send SOL
-solana-agent-kit send \
-  --to 7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU \
-  --amount 0.1 \
-  --token SOL
-
-# Send USDC
-solana-agent-kit send \
-  --to 7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU \
-  --amount 10 \
-  --token USDC
-
-# Send with memo
-solana-agent-kit send \
-  --to <ADDRESS> \
-  --amount 1 \
-  --token SOL \
-  --memo "Payment for alpha signals"
+# Get current price (via Jupiter)
+solana-agent-kit price SOL
+solana-agent-kit price USDC
+solana-agent-kit price JUP
+solana-agent-kit price BONK
 ```
 
 ### Token Swaps (Jupiter)
 
 ```bash
-# Get quote
+# Get quote before swapping
 solana-agent-kit quote --from SOL --to USDC --amount 1
 
-# Execute swap
+# Execute swap (uses Jupiter aggregator for best rates)
 solana-agent-kit swap --from SOL --to USDC --amount 1
 
-# Swap with slippage
-solana-agent-kit swap --from SOL --to BONK --amount 0.5 --slippage 1
+# Swap with custom slippage (basis points, default 50 = 0.5%)
+solana-agent-kit swap --from SOL --to USDC --amount 1 --slippage 100
 ```
 
-### Wallet Monitoring
+### Send Tokens
+
+```bash
+# Send SOL
+solana-agent-kit send --to <ADDRESS> --amount 0.1 --token SOL
+
+# Send USDC
+solana-agent-kit send --to <ADDRESS> --amount 10 --token USDC
+
+# Send with memo
+solana-agent-kit send --to <ADDRESS> --amount 1 --token SOL --memo "Payment for services"
+```
+
+## DeFi Integrations
+
+### Marinade Finance (Liquid Staking)
+
+Stake SOL to earn ~7-8% APY while keeping liquidity.
+
+```bash
+# Get Marinade info (exchange rate, APY)
+solana-agent-kit marinade info
+
+# Stake SOL → receive mSOL
+solana-agent-kit stake --amount 1
+
+# Unstake mSOL → receive SOL
+solana-agent-kit unstake --amount 1
+
+# Check mSOL balance
+solana-agent-kit balance --token mSOL
+```
+
+**mSOL Token:** `mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So`
+
+### Kamino Finance (Lending & Borrowing)
+
+Earn yield by depositing, or borrow against collateral.
+
+```bash
+# List all lending markets
+solana-agent-kit lending markets
+
+# Get best supply/borrow rates
+solana-agent-kit lending rates
+
+# Check your lending position
+solana-agent-kit lending position
+
+# Calculate available borrow power
+solana-agent-kit lending borrow-power
+```
+
+### Raydium (AMM & Liquidity Pools)
+
+Provide liquidity and earn trading fees.
+
+```bash
+# List top pools by volume
+solana-agent-kit pools
+
+# Get specific pool info
+solana-agent-kit pool-info <POOL_ID>
+
+# List farming opportunities
+solana-agent-kit farms
+```
+
+### Metaplex (NFTs)
+
+Create and manage NFTs.
+
+```bash
+# List NFTs you own
+solana-agent-kit nfts
+
+# Get NFT metadata
+solana-agent-kit nft-info <MINT_ADDRESS>
+
+# Create NFT (requires metadata URI)
+solana-agent-kit create-nft --name "My NFT" --uri <ARWEAVE_URI>
+```
+
+## Monitoring
 
 ```bash
 # Watch for incoming transactions
 solana-agent-kit watch
 
-# Watch specific token
-solana-agent-kit watch --token USDC
-
-# Webhook on receive
-solana-agent-kit watch --webhook http://localhost:3000/receive
+# Transaction history
+solana-agent-kit history
 ```
 
-### Transaction History
+## JSON Output
+
+Add `--json` to any command for machine-readable output:
 
 ```bash
-# Recent transactions
-solana-agent-kit history
-
-# Filter by token
-solana-agent-kit history --token USDC --limit 10
+solana-agent-kit balance --json
+solana-agent-kit price SOL --json
+solana-agent-kit quote --from SOL --to USDC --amount 1 --json
 ```
 
-## Use Cases
+## Network Selection
 
-### 1. Agent That Earns and Spends
+```bash
+# Use devnet (for testing)
+solana-agent-kit --network devnet balance
 
-```javascript
-// Agent receives payment
-const balance = await kit.balance('USDC');
-console.log(`Earned: ${balance} USDC`);
-
-// Agent pays for a service
-await kit.send({
-  to: serviceProvider,
-  amount: 0.10,
-  token: 'USDC',
-  memo: 'Payment for API call'
-});
+# Use mainnet (default)
+solana-agent-kit --network mainnet balance
 ```
 
-### 2. Autonomous Trading Agent
+## Example Agent Workflow
 
-```javascript
-// Check if should swap
-const solPrice = await kit.getPrice('SOL');
-if (solPrice < 100) {
-  // Buy SOL with USDC
-  await kit.swap({
-    from: 'USDC',
-    to: 'SOL',
-    amount: 50
-  });
-}
+```bash
+# Morning routine: Check portfolio
+solana-agent-kit balance --json
+
+# If SOL > 10: Stake excess via Marinade for yield
+SOL_BALANCE=$(solana-agent-kit balance --token SOL --json | jq '.amount')
+if (( $(echo "$SOL_BALANCE > 10" | bc -l) )); then
+  solana-agent-kit stake --amount 5
+fi
+
+# Check if any good lending opportunities
+BEST_APY=$(solana-agent-kit lending rates --json | jq '.bestSupplyRates[0].supplyApy')
+if (( $(echo "$BEST_APY > 5" | bc -l) )); then
+  echo "Good lending opportunity: $BEST_APY% APY"
+fi
+
+# Rebalance: If USDC > 50%, swap some to SOL
+solana-agent-kit swap --from USDC --to SOL --amount 10
 ```
 
-### 3. Payment Receiving Agent
-
-```javascript
-// Watch for payments
-kit.watch({
-  token: 'USDC',
-  onReceive: async (tx) => {
-    console.log(`Received ${tx.amount} USDC from ${tx.from}`);
-    // Provide service
-    await provideService(tx.from);
-  }
-});
-```
-
-## Configuration
-
-`~/.config/solana-agent-kit/config.json`:
-
-```json
-{
-  "rpc": "https://api.mainnet-beta.solana.com",
-  "wallet_path": "~/.config/solana-agent-kit/wallet.json",
-  "default_slippage": 0.5,
-  "confirm_large_tx": true,
-  "large_tx_threshold": 100
-}
-```
-
-## Security
-
-### Wallet Safety
-- Private key stored locally (never transmitted)
-- Optional confirmation for large transactions
-- Transaction simulation before execution
-
-### Best Practices
-- Use a dedicated agent wallet (not your main)
-- Set spending limits
-- Enable confirmations for large amounts
-
-## API for Other Agents
-
-```javascript
-const SolanaAgentKit = require('solana-agent-kit');
-
-const kit = new SolanaAgentKit({
-  wallet: './my-wallet.json',
-  rpc: 'https://api.mainnet-beta.solana.com'
-});
-
-// Check balance
-const balance = await kit.balance('SOL');
-
-// Send tokens
-const tx = await kit.send({
-  to: 'ADDRESS',
-  amount: 1,
-  token: 'SOL'
-});
-
-// Swap via Jupiter
-const swap = await kit.swap({
-  from: 'SOL',
-  to: 'USDC',
-  amount: 1
-});
-```
-
-## Supported Tokens
+## Common Token Mints
 
 | Token | Mint Address |
 |-------|--------------|
-| SOL | Native |
-| USDC | EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v |
-| USDT | Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB |
-| BONK | DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263 |
-| JUP | JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN |
-| WIF | EKpQGSJtjMFqKZ9KQanSqYXRcF8fBopzLHYxdM65zcjm |
+| SOL (wrapped) | `So11111111111111111111111111111111111111112` |
+| USDC | `EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v` |
+| USDT | `Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB` |
+| mSOL | `mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So` |
+| JUP | `JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN` |
+| RAY | `4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R` |
+| BONK | `DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263` |
 
-## 🏆 Hackathon Entry
+## Protocol Addresses
 
-**Solana x Colosseum Agent Hackathon** ($100K)
+| Protocol | Program ID |
+|----------|-----------|
+| Jupiter | `JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4` |
+| Marinade | `MarBmsSgKXdrN1egZf5sqe1TMai9K1rChYNDJgjq7aD` |
+| Kamino Lending | `KLend2g3cP87ber41rSMPVTHZ7KxRZ8s8RG9gR6kxvp` |
+| Raydium AMM | `675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8` |
+| Metaplex | `metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s` |
 
-### Why This Wins
+## Security Notes
 
-| Criteria | Solana Agent Kit |
-|----------|------------------|
-| **On-chain** | ✅ Direct Solana transactions |
-| **Autonomous** | ✅ Agents transact without humans |
-| **Novel** | ✅ Full wallet toolkit for agents |
-| **Useful** | ✅ Foundation for any on-chain agent |
-| **Solana-native** | ✅ Jupiter, SPL tokens, native SOL |
+1. **Wallet file** stored at `~/.solana-agent-kit/wallet.json`
+2. **Never share** your wallet file or seed phrase
+3. **Backup immediately** after creating wallet
+4. **Test on devnet** before mainnet operations
+5. **Start small** when testing new operations
 
-### The Vision
+## Error Handling
 
-Every AI agent needs a wallet. This is that wallet.
+Common errors and solutions:
 
-- x402 agents need to receive payments → **Solana Agent Kit**
-- Trading agents need to swap → **Solana Agent Kit**  
-- DeFi agents need to interact → **Solana Agent Kit**
+| Error | Solution |
+|-------|----------|
+| "No wallet found" | Run `solana-agent-kit init` |
+| "Insufficient balance" | Check balance, fund wallet |
+| "Transaction failed" | Check network, retry with higher slippage |
+| "Token account not found" | Token account created automatically on first receive |
 
-It's infrastructure for the autonomous agent economy.
+## Support
+
+- **GitHub:** https://github.com/Pratiikpy/solana-agent-kit
+- **Issues:** https://github.com/Pratiikpy/solana-agent-kit/issues
 
 ---
 
-**Built by Claw 🦀**
-
-*Giving agents financial autonomy.*
+Built for the Colosseum Agent Hackathon. The foundation for autonomous crypto agents.
