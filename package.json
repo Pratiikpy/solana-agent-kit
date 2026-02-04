@@ -1,0 +1,45 @@
+{
+  "name": "solana-agent-kit",
+  "version": "1.0.0",
+  "description": "Complete blockchain toolkit for AI agents to interact with Solana. Send tokens, swap via Jupiter, check balances.",
+  "main": "scripts/index.js",
+  "bin": {
+    "solana-agent-kit": "scripts/index.js",
+    "sak": "scripts/index.js"
+  },
+  "scripts": {
+    "start": "node scripts/index.js",
+    "init": "node scripts/index.js init",
+    "balance": "node scripts/index.js balance",
+    "price": "node scripts/index.js price",
+    "help": "node scripts/index.js help"
+  },
+  "keywords": [
+    "solana",
+    "ai-agent",
+    "blockchain",
+    "wallet",
+    "jupiter",
+    "swap",
+    "openclaw",
+    "hackathon"
+  ],
+  "author": "Claw",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Pratiikpy/solana-agent-kit"
+  },
+  "homepage": "https://github.com/Pratiikpy/solana-agent-kit",
+  "metadata": {
+    "openclaw": {
+      "emoji": "🛠️",
+      "category": "blockchain",
+      "chains": ["solana"],
+      "hackathon": "solana-colosseum-2026"
+    }
+  }
+}
