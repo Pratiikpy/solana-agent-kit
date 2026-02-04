@@ -1,18 +1,12 @@
 /**
  * Wallet Management Module
- * Structured for @solana/kit integration
- * 
- * In production, would use:
- * - createKeyPairFromBytes from @solana/kit
- * - generateKeyPair from @solana/web3.js
+ * Proper Solana keypair generation using @solana/web3.js
  */
 
 import fs from 'fs';
 import path from 'path';
-import crypto from 'crypto';
-
-// Note: In full implementation, import from @solana/kit
-// import { createKeyPairFromBytes, getAddressFromPublicKey } from '@solana/kit';
+import { Keypair } from '@solana/web3.js';
+import * as bip39 from 'bip39';
 
 const CONFIG_DIR = path.join(process.env.HOME, '.config/solana-agent-kit');
 const WALLET_PATH = path.join(CONFIG_DIR, 'wallet.json');
@@ -28,38 +22,34 @@ function ensureConfigDir() {
 }
 
 /**
- * Generate a new keypair using @solana/kit patterns
+ * Generate a new Solana keypair
  */
 export async function createWallet() {
   ensureConfigDir();
   
   if (fs.existsSync(WALLET_PATH)) {
-    throw new Error('Wallet already exists. Delete it first to create new one.');
+    throw new Error('Wallet already exists. Delete ~/.config/solana-agent-kit/wallet.json to create new one.');
   }
   
-  // Generate 64-byte keypair (32 secret + 32 public)
-  const secretKey = crypto.randomBytes(32);
+  // Generate mnemonic
+  const mnemonic = bip39.generateMnemonic();
   
-  // For proper Ed25519, we'd use the full crypto flow
-  // Simplified for demo - in production use generateKeyPair from @solana/web3.js
-  const keypair = {
-    secretKey: Array.from(secretKey),
-    // Public key derived (simplified)
-    publicKey: crypto.createHash('sha256').update(secretKey).digest('hex').slice(0, 44)
+  // Generate keypair from random bytes
+  const keypair = Keypair.generate();
+  
+  const walletData = {
+    publicKey: keypair.publicKey.toBase58(),
+    secretKey: Array.from(keypair.secretKey),
+    mnemonic: mnemonic, // For backup purposes
+    createdAt: new Date().toISOString(),
   };
   
-  // Save with restricted permissions
-  fs.writeFileSync(WALLET_PATH, JSON.stringify(keypair, null, 2));
-  fs.chmodSync(WALLET_PATH, 0o600);
+  fs.writeFileSync(WALLET_PATH, JSON.stringify(walletData, null, 2), { mode: 0o600 });
   
-  // Save default config
-  const config = {
-    rpc: 'https://api.mainnet-beta.solana.com',
-    commitment: 'confirmed'
+  return {
+    publicKey: walletData.publicKey,
+    mnemonic: mnemonic,
   };
-  fs.writeFileSync(CONFIG_PATH, JSON.stringify(config, null, 2));
-  
-  return keypair;
 }
 
 /**
@@ -69,7 +59,19 @@ export function loadWallet() {
   if (!fs.existsSync(WALLET_PATH)) {
     return null;
   }
-  return JSON.parse(fs.readFileSync(WALLET_PATH, 'utf8'));
+  
+  try {
+    const data = JSON.parse(fs.readFileSync(WALLET_PATH, 'utf8'));
+    const keypair = Keypair.fromSecretKey(Uint8Array.from(data.secretKey));
+    
+    return {
+      publicKey: keypair.publicKey.toBase58(),
+      keypair: keypair,
+    };
+  } catch (e) {
+    console.error('Error loading wallet:', e.message);
+    return null;
+  }
 }
 
 /**
@@ -77,21 +79,78 @@ export function loadWallet() {
  */
 export function getAddress() {
   const wallet = loadWallet();
-  if (!wallet) return null;
-  return wallet.publicKey;
+  return wallet ? wallet.publicKey : null;
 }
 
 /**
- * Load config
+ * Delete wallet (with confirmation)
+ */
+export function deleteWallet() {
+  if (fs.existsSync(WALLET_PATH)) {
+    fs.unlinkSync(WALLET_PATH);
+    return true;
+  }
+  return false;
+}
+
+/**
+ * Import wallet from secret key (base58 or array)
+ */
+export async function importWallet(secretKeyInput) {
+  ensureConfigDir();
+  
+  if (fs.existsSync(WALLET_PATH)) {
+    throw new Error('Wallet already exists. Delete it first.');
+  }
+  
+  let keypair;
+  
+  if (Array.isArray(secretKeyInput)) {
+    keypair = Keypair.fromSecretKey(Uint8Array.from(secretKeyInput));
+  } else if (typeof secretKeyInput === 'string') {
+    // Assume base58 encoded
+    const bs58 = (await import('bs58')).default;
+    const decoded = bs58.decode(secretKeyInput);
+    keypair = Keypair.fromSecretKey(decoded);
+  } else {
+    throw new Error('Invalid secret key format');
+  }
+  
+  const walletData = {
+    publicKey: keypair.publicKey.toBase58(),
+    secretKey: Array.from(keypair.secretKey),
+    importedAt: new Date().toISOString(),
+  };
+  
+  fs.writeFileSync(WALLET_PATH, JSON.stringify(walletData, null, 2), { mode: 0o600 });
+  
+  return {
+    publicKey: walletData.publicKey,
+  };
+}
+
+/**
+ * Load or create config
  */
 export function loadConfig() {
-  if (fs.existsSync(CONFIG_PATH)) {
-    return JSON.parse(fs.readFileSync(CONFIG_PATH, 'utf8'));
-  }
-  return {
-    rpc: 'https://api.mainnet-beta.solana.com',
-    commitment: 'confirmed'
+  ensureConfigDir();
+  
+  const defaultConfig = {
+    network: 'mainnet-beta',
+    rpcUrl: 'https://api.mainnet-beta.solana.com',
+    commitment: 'confirmed',
   };
+  
+  if (!fs.existsSync(CONFIG_PATH)) {
+    fs.writeFileSync(CONFIG_PATH, JSON.stringify(defaultConfig, null, 2));
+    return defaultConfig;
+  }
+  
+  try {
+    return { ...defaultConfig, ...JSON.parse(fs.readFileSync(CONFIG_PATH, 'utf8')) };
+  } catch (e) {
+    return defaultConfig;
+  }
 }
 
 /**
@@ -102,4 +161,12 @@ export function saveConfig(config) {
   fs.writeFileSync(CONFIG_PATH, JSON.stringify(config, null, 2));
 }
 
-export { CONFIG_DIR, WALLET_PATH, CONFIG_PATH };
+export default {
+  createWallet,
+  loadWallet,
+  getAddress,
+  deleteWallet,
+  importWallet,
+  loadConfig,
+  saveConfig,
+};

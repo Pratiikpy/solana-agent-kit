@@ -1,60 +1,38 @@
 {
   "name": "solana-agent-kit",
   "version": "2.0.0",
-  "description": "Complete blockchain toolkit for AI agents. Built with @solana/kit following Solana Foundation guidelines.",
+  "description": "The most comprehensive blockchain toolkit for AI agents on Solana",
   "type": "module",
   "main": "src/index.js",
   "bin": {
-    "solana-agent-kit": "src/cli.js",
-    "sak": "src/cli.js"
+    "solana-agent-kit": "./src/cli.js"
   },
   "scripts": {
     "start": "node src/cli.js",
-    "test": "node --test src/**/*.test.js",
-    "build": "echo 'No build step needed'"
+    "test": "node --test"
   },
-  "dependencies": {},
-  "peerDependencies": {
-    "@solana/kit": "^2.1.0",
-    "@solana/web3.js": "^2.0.0",
-    "@solana-program/token": "^0.4.0",
-    "@solana-program/system": "^0.6.0",
-    "@solana-program/memo": "^0.6.0"
-  },
-  "peerDependenciesMeta": {
-    "@solana/kit": { "optional": true },
-    "@solana/web3.js": { "optional": true },
-    "@solana-program/token": { "optional": true },
-    "@solana-program/system": { "optional": true },
-    "@solana-program/memo": { "optional": true }
-  },
-  "devDependencies": {},
   "keywords": [
     "solana",
-    "ai-agent",
+    "ai",
+    "agent",
     "blockchain",
-    "wallet",
+    "defi",
     "jupiter",
-    "solana-kit",
-    "openclaw",
-    "hackathon"
+    "marinade",
+    "kamino"
   ],
-  "author": "Claw",
+  "author": "prateek-claw",
   "license": "MIT",
-  "engines": {
-    "node": ">=20.0.0"
+  "dependencies": {
+    "@solana/web3.js": "^1.95.0",
+    "bip39": "^3.1.0",
+    "bs58": "^5.0.0"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/Pratiikpy/solana-agent-kit"
   },
-  "metadata": {
-    "openclaw": {
-      "emoji": "🛠️",
-      "category": "blockchain",
-      "chains": ["solana"],
-      "sdk": "@solana/kit",
-      "hackathon": "solana-colosseum-2026"
-    }
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
