@@ -1,44 +1,59 @@
 {
   "name": "solana-agent-kit",
-  "version": "1.0.0",
-  "description": "Complete blockchain toolkit for AI agents to interact with Solana. Send tokens, swap via Jupiter, check balances.",
-  "main": "scripts/index.js",
+  "version": "2.0.0",
+  "description": "Complete blockchain toolkit for AI agents. Built with @solana/kit following Solana Foundation guidelines.",
+  "type": "module",
+  "main": "src/index.js",
   "bin": {
-    "solana-agent-kit": "scripts/index.js",
-    "sak": "scripts/index.js"
+    "solana-agent-kit": "src/cli.js",
+    "sak": "src/cli.js"
   },
   "scripts": {
-    "start": "node scripts/index.js",
-    "init": "node scripts/index.js init",
-    "balance": "node scripts/index.js balance",
-    "price": "node scripts/index.js price",
-    "help": "node scripts/index.js help"
+    "start": "node src/cli.js",
+    "test": "node --test src/**/*.test.js",
+    "build": "echo 'No build step needed'"
   },
+  "dependencies": {},
+  "peerDependencies": {
+    "@solana/kit": "^2.1.0",
+    "@solana/web3.js": "^2.0.0",
+    "@solana-program/token": "^0.4.0",
+    "@solana-program/system": "^0.6.0",
+    "@solana-program/memo": "^0.6.0"
+  },
+  "peerDependenciesMeta": {
+    "@solana/kit": { "optional": true },
+    "@solana/web3.js": { "optional": true },
+    "@solana-program/token": { "optional": true },
+    "@solana-program/system": { "optional": true },
+    "@solana-program/memo": { "optional": true }
+  },
+  "devDependencies": {},
   "keywords": [
     "solana",
     "ai-agent",
     "blockchain",
     "wallet",
     "jupiter",
-    "swap",
+    "solana-kit",
     "openclaw",
     "hackathon"
   ],
   "author": "Claw",
   "license": "MIT",
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=20.0.0"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/Pratiikpy/solana-agent-kit"
   },
-  "homepage": "https://github.com/Pratiikpy/solana-agent-kit",
   "metadata": {
     "openclaw": {
       "emoji": "🛠️",
       "category": "blockchain",
       "chains": ["solana"],
+      "sdk": "@solana/kit",
       "hackathon": "solana-colosseum-2026"
     }
   }

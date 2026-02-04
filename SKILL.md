@@ -1,9 +1,9 @@
 ---
 name: solana-agent-kit
-version: 1.0.0
-description: Complete toolkit for AI agents to interact with Solana blockchain. Send tokens, swap via Jupiter, check balances, monitor wallets. The agent's gateway to on-chain actions.
+version: 2.0.0
+description: Complete toolkit for AI agents to interact with Solana blockchain. Built with @solana/kit following Solana Foundation guidelines (solana.com/SKILL.md). Send tokens, swap via Jupiter, check balances.
 homepage: https://github.com/Pratiikpy/solana-agent-kit
-metadata: {"openclaw":{"emoji":"🛠️","category":"blockchain","chains":["solana"],"hackathon":"solana-colosseum-2026"}}
+metadata: {"openclaw":{"emoji":"🛠️","category":"blockchain","chains":["solana"],"sdk":"@solana/kit","hackathon":"solana-colosseum-2026"}}
 ---
 
 # Solana Agent Kit 🛠️
